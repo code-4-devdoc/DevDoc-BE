@@ -33,7 +33,7 @@ public class ResumeController {
     }
 
     // ResumeId 조회 : 모든 테이블
-    @GetMapping("/{resumeId}/Test")
+    @GetMapping("/{resumeId}/test")
     public ResponseEntity<ResumeDTO> getResumeByResumeIdTest(@PathVariable int resumeId) {
         try {
             ResumeDTO resumeDTO = resumeService.getResumeByResumeIdTest(resumeId);
