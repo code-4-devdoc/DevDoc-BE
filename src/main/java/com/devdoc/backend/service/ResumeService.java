@@ -110,9 +110,12 @@ public class ResumeService {
         if (optionalSkill.isPresent()) {
             Skill skill = optionalSkill.get();
     
-            if (content != null) {
+            if (content != null && !content.equalsIgnoreCase("null")) {
                 skill.setContent(content);
-                skill.setStatus(true);      // Status T? F?
+                skill.setStatus(true);
+            } else {
+                skill.setContent(null);
+                skill.setStatus(false);         // status : T? F?
             }
     
             skillRepository.save(skill);
