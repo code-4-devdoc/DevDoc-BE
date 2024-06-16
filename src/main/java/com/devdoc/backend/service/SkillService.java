@@ -64,11 +64,11 @@ public class SkillService {
 
     // Skill 삭제 : Skill 전체
     public void deleteSkillByResumeId(int resumeId) {
-        Resume resume = resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
+        if (!resumeRepository.existsById(resumeId)) {
+            throw new ResourceNotFoundException("Resume not found");
+        }
 
-        List<Skill> skills = resume.getSkills();
-        skillRepository.deleteAll(skills);
+        skillRepository.deleteByResumeId(resumeId);
     }
 
     // -------------------------------------------------------------------------------------

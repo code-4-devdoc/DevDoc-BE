@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface SkillRepository extends JpaRepository<Skill, Integer> {
     List<Skill> findByResumeId(int resumeId);
+    void deleteByResumeId(int resumeId);
 }

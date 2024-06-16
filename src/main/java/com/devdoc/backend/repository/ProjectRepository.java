@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
     List<Project> findByResumeId(int resumeId);
+    void deleteByResumeId(int resumeId);
 }

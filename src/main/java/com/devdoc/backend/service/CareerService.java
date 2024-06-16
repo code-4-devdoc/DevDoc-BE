@@ -64,11 +64,11 @@ public class CareerService {
 
     // Career 삭제 : Career 전체
     public void deleteCareerByResumeId(int resumeId) {
-        Resume resume = resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
+        if (!resumeRepository.existsById(resumeId)) {
+            throw new ResourceNotFoundException("Resume not found");
+        }
 
-        List<Career> careers = resume.getCareers();
-        careerRepository.deleteAll(careers);
+        careerRepository.deleteByResumeId(resumeId);
     }
 
     // -------------------------------------------------------------------------------------

@@ -64,11 +64,11 @@ public class ProjectService {
 
     // Project 삭제 : Project 전체
     public void deleteProjectByResumeId(int resumeId) {
-        Resume resume = resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
+        if (!resumeRepository.existsById(resumeId)) {
+            throw new ResourceNotFoundException("Resume not found");
+        }
 
-        List<Project> projects = resume.getProjects();
-        projectRepository.deleteAll(projects);
+        projectRepository.deleteByResumeId(resumeId);
     }
 
     // -------------------------------------------------------------------------------------
