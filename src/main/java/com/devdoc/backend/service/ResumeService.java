@@ -158,10 +158,17 @@ public class ResumeService {
         for (SkillDTO skillDTO : skillDTOs) {
             Skill skill = skillRepository.findById(skillDTO.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Skill not found"));
+    
             if (skillDTO.getContent() != null && !skillDTO.getContent().equalsIgnoreCase("null")) {
+                skill.setTechStack(skillDTO.getTechStack());
                 skill.setContent(skillDTO.getContent());
                 skill.setStatus(!skillDTO.getContent().isEmpty());
+            } else {
+                skill.setTechStack(null);
+                skill.setContent(null);
+                skill.setStatus(false);
             }
+    
             skillRepository.save(skill);
         }
     }
@@ -171,10 +178,25 @@ public class ResumeService {
         for (CareerDTO careerDTO : careerDTOs) {
             Career career = careerRepository.findById(careerDTO.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Career not found"));
+    
             if (careerDTO.getContent() != null && !careerDTO.getContent().equalsIgnoreCase("null")) {
+                career.setCompany(careerDTO.getCompany());
+                career.setDepartment(careerDTO.getDepartment());
+                career.setPeriod(careerDTO.getPeriod());
+                career.setIsCurrent(careerDTO.getIsCurrent());
+                career.setTechStack(careerDTO.getTechStack());
                 career.setContent(careerDTO.getContent());
                 career.setStatus(!careerDTO.getContent().isEmpty());
+            } else {
+                career.setCompany(null);
+                career.setDepartment(null);
+                career.setPeriod(null);
+                career.setIsCurrent(null);
+                career.setTechStack(null);
+                career.setContent(null);
+                career.setStatus(false);
             }
+    
             careerRepository.save(career);
         }
     }
@@ -184,10 +206,25 @@ public class ResumeService {
         for (ProjectDTO projectDTO : projectDTOs) {
             Project project = projectRepository.findById(projectDTO.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+    
             if (projectDTO.getContent() != null && !projectDTO.getContent().equalsIgnoreCase("null")) {
+                project.setTitle(projectDTO.getTitle());
+                project.setPeriod(projectDTO.getPeriod());
+                project.setIsCurrent(projectDTO.getIsCurrent());
+                project.setIntro(projectDTO.getIntro());
+                project.setTechStack(projectDTO.getTechStack());
                 project.setContent(projectDTO.getContent());
                 project.setStatus(!projectDTO.getContent().isEmpty());
+            } else {
+                project.setTitle(null);
+                project.setPeriod(null);
+                project.setIsCurrent(null);
+                project.setIntro(null);
+                project.setTechStack(null);
+                project.setContent(null);
+                project.setStatus(false);
             }
+    
             projectRepository.save(project);
         }
     }

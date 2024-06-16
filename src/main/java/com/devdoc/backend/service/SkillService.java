@@ -45,13 +45,20 @@ public class SkillService {
 
     // Skill 생성 : Resume ~ Skill x3
     public void createSkillByResumeId(int resumeId) {
+        List<Integer> skillIds = getSkillIdByResumeId(resumeId);
+    
+        if (skillIds.size() >= 3) {
+            throw new IllegalStateException("Cannot create more than 3 skills for a resume.");
+        }
+    
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
-
-        for (int i = 0; i < 3; i++) {
+    
+        for (int i = skillIds.size(); i < 3; i++) {
             Skill skill = new Skill(resume, false, null, null);
             skillRepository.save(skill);
         }
+    
         resumeRepository.flush();
     }
 

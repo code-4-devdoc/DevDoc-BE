@@ -45,13 +45,20 @@ public class CareerService {
 
     // Career 생성 : Resume ~ Career x3
     public void createCareerByResumeId(int resumeId) {
+        List<Integer> careerIds = getCareerIdByResumeId(resumeId);
+    
+        if (careerIds.size() >= 3) {
+            throw new IllegalStateException("Cannot create more than 3 careers for a resume.");
+        }
+    
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
-
-        for (int i = 0; i < 3; i++) {
+    
+        for (int i = careerIds.size(); i < 3; i++) {
             Career career = new Career(resume, false, null, null, null, null, null, null);
             careerRepository.save(career);
         }
+    
         resumeRepository.flush();
     }
 

@@ -45,13 +45,20 @@ public class ProjectService {
 
     // Project 생성 : Resume ~ Project x3
     public void createProjectByResumeId(int resumeId) {
+        List<Integer> projectIds = getProjectIdByResumeId(resumeId);
+    
+        if (projectIds.size() >= 3) {
+            throw new IllegalStateException("Cannot create more than 3 projects for a resume.");
+        }
+    
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
-
-        for (int i = 0; i < 3; i++) {
+    
+        for (int i = projectIds.size(); i < 3; i++) {
             Project project = new Project(resume, false, null, null, null, null, null, null);
             projectRepository.save(project);
         }
+    
         resumeRepository.flush();
     }
 
