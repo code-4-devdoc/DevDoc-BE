@@ -16,39 +16,56 @@
 
 ---
 
-# DB 설계
-### UUser : 
-### Resume : id title
-### SSkill : id resume_id status content
+# API 설계 v2
+### `POST /api/register` 회원가입
+: test 에서는 User ID = 1 필요
+### `GET /api/resumes` Resume 목록 조회
+: 로그인 User 검증  
+: resumeId, title, createdAt
+### `GET /api/resumes/test` Resume 목록 조회
+: User ID = 1  
+: resumeId, title, createdAt
 <br/>
-
-- Resume 생성 시 Skill 3개가 미리 생성
-- Skill.content : Null -> .status : False
-- Skill.content : NotNull -> .status : True
-- 기존의방식) Skill 테이블 생성 시 POST 메소드를 사용
-- 이번테스트) Skill 테이블을 미리 생성 후 PUT 메소드를 사용 (=덮어쓰기)
 <br/>
-
----
-
-# API 설계
-#### `GET /api/resumes/`
-> Resume 목록 조회 : Id와 Title만
-
-#### `GET /api/resumes/{resumeId}`
-> ResumeId 조회 : Status = T 인 모든 테이블
-
-#### `GET /api/resumes/{resumeId}/test`
-> ResumeId 조회 : 모든 테이블 (DB 작동 확인용)
-
-#### `POST /api/resumes`
-> ResumeId 생성 ~ SkillId x3 생성
-
-#### `DEL /api/resumes/{resumeId}`
-> ResumeId 삭제
-
-#### `PUT /api/resumes/{resumeId}/title`
-> ResumeId 업데이트 : Title만
-
-#### `PUT /api/resumes//{skillId}/skills`
-> SkillId 업데이트
+<br/>
+### `GET /api/resumes/{resumeId}` Resume 조회
+: 로그인 User 검증  
+: status = T 인 모든 테이블
+### `POST /api/resumes` Resume 생성
+: 로그인 User 검증  
+### `DEL /api/resumes/{resumeId}` Resume 삭제
+: 로그인 User 검증
+### `PATCH /api/resumes/{resumeId}/title` Resume 업데이트
+: 로그인 User 검증  
+: title
+### `PATCH /api/resumes/{resumeId}/data` Resume 업데이트
+: 로그인 User 검증  
+: title 포함 테이블 전체
+<br/>
+<br/>
+<br/>
+### `GET /api/resumes/test/{resumeId}` Resume 조회
+: User ID = 1  
+: status = F 포함 모든 테이블
+### `POST /api/resumes/test` Resume 생성
+: User ID = 1
+### `DEL /api/resumes/test/{resumeId}` Resume 삭제
+: User ID = 1
+### `PATCH /api/resumes/test/{resumeId}/title` Resume 업데이트
+: User ID = 1  
+: title
+### `PATCH /api/resumes/test/{resumeId}/data` Resume 업데이트
+: User ID = 1  
+: title 포함 테이블 전체
+<br/>
+<br/>
+<br/>
+### `GET /api/resumes/skills/{resumeId}` Skill ID 조회
+: 컨테이너 ID 부여용
+### `GET /api/resumes/skills/{resumeId}/data` Skill 조회
+: status = T 인 모든 테이블  
+: 만약 없다면 Skill 테이블 3개 생성
+### `GET /api/resumes/skills/test/{resumeId}/data` Skill 조회
+: status = F 포함 모든 테이블  
+: 만약 없다면 Skill 테이블 3개 생성
+### `DEL /api/resumes/skills/{resumeId}` Skill 삭제
