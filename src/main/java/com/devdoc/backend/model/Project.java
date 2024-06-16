@@ -3,8 +3,8 @@ package com.devdoc.backend.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "SSkill")
-public class Skill {
+@Table(name = "PProject")
+public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -14,14 +14,22 @@ public class Skill {
     private Resume resume;
 
     private boolean status;
+    private String title;
+    private String period;
+    private Boolean isCurrent;
+    private String intro;
     private String techStack;
     private String content;
 
-    public Skill() {}
+    public Project() {}
 
-    public Skill(Resume resume, boolean status, String techStack, String content) {
+    public Project(Resume resume, boolean status, String title, String period, Boolean isCurrent, String intro, String techStack, String content) {
         this.resume = resume;
         this.status = status;
+        this.title = title;
+        this.period = period;
+        this.isCurrent = isCurrent;
+        this.intro = intro;
         this.techStack = techStack;
         this.content = content;
     }
@@ -48,6 +56,38 @@ public class Skill {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(String period) {
+        this.period = period;
+    }
+
+    public Boolean getIsCurrent() {
+        return isCurrent;
+    }
+
+    public void setIsCurrent(Boolean isCurrent) {
+        this.isCurrent = isCurrent;
+    }
+
+    public String getIntro() {
+        return intro;
+    }
+
+    public void setIntro(String intro) {
+        this.intro = intro;
     }
 
     public String getTechStack() {

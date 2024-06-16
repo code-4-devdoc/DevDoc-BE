@@ -1,19 +1,32 @@
-// ResumeController.java
 package com.devdoc.backend.service;
 
 import com.devdoc.backend.dto.ResumeDTO;
 import com.devdoc.backend.dto.SkillDTO;
+import com.devdoc.backend.dto.CareerDTO;
+import com.devdoc.backend.dto.ProjectDTO;
+//
+// 추가
+//
 import com.devdoc.backend.model.Resume;
+import com.devdoc.backend.model.User;
 import com.devdoc.backend.model.Skill;
+import com.devdoc.backend.model.Career;
+import com.devdoc.backend.model.Project;
+//
+// 추가
+//
 import com.devdoc.backend.repository.ResumeRepository;
 import com.devdoc.backend.repository.SkillRepository;
+import com.devdoc.backend.repository.CareerRepository;
+import com.devdoc.backend.repository.ProjectRepository;
+//
+// 추가
+//
+import com.devdoc.backend.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,102 +38,232 @@ public class ResumeService {
     @Autowired
     private SkillRepository skillRepository;
 
-    // User 의 Resume 목록 조회 : Id와 Title만
-    public List<ResumeDTO> getAllResumesByUser() {
-        List<Resume> resumes = resumeRepository.findAll();
-        List<ResumeDTO> resumeDTOs = new ArrayList<>();
-        for (Resume resume : resumes) {
-            ResumeDTO resumeDTO = new ResumeDTO(resume.getId(), resume.getTitle());
-            resumeDTOs.add(resumeDTO);
-        }
-        return resumeDTOs;
-    }
+    @Autowired
+    private CareerRepository careerRepository;
 
-    // ResumeId 조회 : 모든 테이블
+    @Autowired
+    private ProjectRepository projectRepository;
+
+    //
+    // 추가
+    //
+
+    @Autowired
+    private UserService userService;
+
+    // Resume 조회 : 모든 테이블 -------------------------------------------------- Test Code
     public ResumeDTO getResumeByResumeIdTest(int resumeId) {
-        Optional<Resume> optionalResume = resumeRepository.findById(resumeId);
-        if (optionalResume.isPresent()) {
-            Resume resume = optionalResume.get();
-            List<SkillDTO> skillDTOs = resume.getSkills().stream()
-                .map(skill -> new SkillDTO(skill.getId(), skill.getResume().getId(), skill.getStatus(), skill.getContent()))
-                .collect(Collectors.toList());
-            return new ResumeDTO(resume.getId(), resume.getTitle(), skillDTOs);
-        }
-        return null;
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
+
+        return mapToResumeDTO(resume);
     }
 
-    // ResumeId 조회 : Status = T 인 모든 테이블
+    // Resume 조회 : Status = T 인 모든 테이블
     public ResumeDTO getResumeByResumeId(int resumeId) {
-        Optional<Resume> optionalResume = resumeRepository.findById(resumeId);
-        if (optionalResume.isPresent()) {
-            Resume resume = optionalResume.get();
-            List<Skill> skills = resume.getSkills().stream()
-                .filter(Skill::getStatus)
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
+
+        List<Skill> filteredSkills = resume.getSkills().stream()
+                .filter(Skill::isStatus)
                 .collect(Collectors.toList());
-            List<SkillDTO> skillDTOs = new ArrayList<>();
-            for (Skill skill : skills) {
-                SkillDTO skillDTO = new SkillDTO(skill.getId(), skill.getResume().getId(), skill.getStatus(), skill.getContent());
-                skillDTOs.add(skillDTO);
-            }
-            return new ResumeDTO(resume.getId(), resume.getTitle(), skillDTOs);
-        }
-        return null;
+        resume.setSkills(filteredSkills);
+
+        List<Project> filteredProjects = resume.getProjects().stream()
+                .filter(Project::isStatus)
+                .collect(Collectors.toList());
+        resume.setProjects(filteredProjects);
+
+        List<Career> filteredCareers = resume.getCareers().stream()
+                .filter(Career::isStatus)
+                .collect(Collectors.toList());
+        resume.setCareers(filteredCareers);
+
+        //
+        // 추가
+        //
+
+        return mapToResumeDTO(resume);
     }
 
-    // ResumeId 생성 : SkillId x3 생성
-    @Transactional
-    public Resume createResume(String title) {
-        Resume resume = new Resume(title);
+    // Resume 생성 : User ID = 1 ------------------------------------------------- Test Code
+    public ResumeDTO createResumeTest(String title) {
+        int userId = 1;
+        User user = userService.getUserByUserId(userId);
+
+        Resume resume = new Resume(user, title);
         resume = resumeRepository.save(resume);
-    
-        for (int i = 0; i < 3; i++) {
-            Skill skill = new Skill();
-            skill.setResume(resume);                // resumeId
-            skillRepository.save(skill);
+
+        return mapToResumeDTO(resume);
+    }
+
+    // Resume 생성 : 로그인 User
+    public ResumeDTO createResume(String title) {
+        int userId = userService.getCurrentUserId();
+        User user = userService.getUserByUserId(userId);
+
+        Resume resume = new Resume(user, title);
+        resume = resumeRepository.save(resume);
+
+        return mapToResumeDTO(resume);
+    }
+
+    // Resume 삭제
+    public void deleteResume(int resumeId) {
+        resumeRepository.deleteById(resumeId);
+    }
+
+    // Resume 업데이트 : Title
+    public ResumeDTO saveResumeTitleByResumeId(int resumeId, String title) {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
+        resume.setTitle(title);
+        resume = resumeRepository.save(resume);
+
+        return mapToResumeDTO(resume);
+    }
+
+    // Resume 업데이트 : Title 포함 테이블 전체
+    public ResumeDTO saveResumeDataByResumeId(int resumeId, ResumeDTO resumeDTO) {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
+
+        // Title 업데이트
+        if (resumeDTO.getTitle() != null) {
+            resume.setTitle(resumeDTO.getTitle());
         }
-    
-        return resume;
-    }
 
-    // ResumeId 삭제
-    @Transactional
-    public void deleteResumeByResumeId(int resumeId) {
-        Optional<Resume> optionalResume = resumeRepository.findById(resumeId);
-        optionalResume.ifPresent(resume -> resumeRepository.delete(resume));
-    }
-
-    // ResumeId 업데이트 : Title만
-    @Transactional
-    public ResumeDTO saveResumeTitleByResumeId(int resumeId, String newTitle) {
-        Optional<Resume> optionalResume = resumeRepository.findById(resumeId);
-
-        if (optionalResume.isPresent()) {
-            Resume resume = optionalResume.get();
-            resume.setTitle(newTitle);
-            resumeRepository.save(resume);
-            return new ResumeDTO(resume.getId(), resume.getTitle());
+        // Skills, Careers, Projects 업데이트 : Status 포함
+        if (resumeDTO.getSkills() != null) {
+            updateSkills(resume, resumeDTO.getSkills());
         }
-        return null;
+        if (resumeDTO.getCareers() != null) {
+            updateCareers(resume, resumeDTO.getCareers());
+        }
+        if (resumeDTO.getProjects() != null) {
+            updateProjects(resume, resumeDTO.getProjects());
+        }
+
+        resume = resumeRepository.save(resume);
+
+        return mapToResumeDTO(resume);
     }
 
-    // SkillId 업데이트
-    @Transactional
-    public SkillDTO saveSkillBySkillId(int skillId, String content) {
-        Optional<Skill> optionalSkill = skillRepository.findById(skillId);
-        if (optionalSkill.isPresent()) {
-            Skill skill = optionalSkill.get();
-    
-            if (content != null && !content.equalsIgnoreCase("null")) {
-                skill.setContent(content);
-                skill.setStatus(true);
-            } else {
-                skill.setContent(null);
-                skill.setStatus(false);         // status : T? F?
+    // -------------------------------------------------------------------------------------
+    // 호출함수
+    // -------------------------------------------------------------------------------------
+
+    // Content 를 기준으로 Status 를 True/False 설정
+    private void updateSkills(Resume resume, List<SkillDTO> skillDTOs) {
+        for (SkillDTO skillDTO : skillDTOs) {
+            Skill skill = skillRepository.findById(skillDTO.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Skill not found"));
+            if (skillDTO.getContent() != null && !skillDTO.getContent().equalsIgnoreCase("null")) {
+                skill.setContent(skillDTO.getContent());
+                skill.setStatus(!skillDTO.getContent().isEmpty());
             }
-    
             skillRepository.save(skill);
-            return new SkillDTO(skill.getId(), skill.getResume().getId(), skill.getStatus(), skill.getContent());
         }
-        return null;
     }
+
+    // Content 를 기준으로 Status 를 True/False 설정
+    private void updateCareers(Resume resume, List<CareerDTO> careerDTOs) {
+        for (CareerDTO careerDTO : careerDTOs) {
+            Career career = careerRepository.findById(careerDTO.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Career not found"));
+            if (careerDTO.getContent() != null && !careerDTO.getContent().equalsIgnoreCase("null")) {
+                career.setContent(careerDTO.getContent());
+                career.setStatus(!careerDTO.getContent().isEmpty());
+            }
+            careerRepository.save(career);
+        }
+    }
+
+    // Content 를 기준으로 Status 를 True/False 설정
+    private void updateProjects(Resume resume, List<ProjectDTO> projectDTOs) {
+        for (ProjectDTO projectDTO : projectDTOs) {
+            Project project = projectRepository.findById(projectDTO.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+            if (projectDTO.getContent() != null && !projectDTO.getContent().equalsIgnoreCase("null")) {
+                project.setContent(projectDTO.getContent());
+                project.setStatus(!projectDTO.getContent().isEmpty());
+            }
+            projectRepository.save(project);
+        }
+    }
+
+        //
+        // 추가
+        //
+
+    private ResumeDTO mapToResumeDTO(Resume resume) {
+        List<SkillDTO> skills = fetchSkillsForResume(resume.getId());
+        List<CareerDTO> careers = fetchCareersForResume(resume.getId());
+        List<ProjectDTO> projects = fetchProjectsForResume(resume.getId());
+
+        return new ResumeDTO(
+            resume.getId(),
+            resume.getUser().getId(),
+            resume.getTitle(),
+            resume.getCreatedAt(),
+            skills,
+            careers,
+            projects
+            //
+            // 추가
+            //
+        );
+    }
+
+    private List<SkillDTO> fetchSkillsForResume(int resumeId) {
+        return skillRepository.findByResumeId(resumeId).stream()
+                .map(skill -> new SkillDTO(
+                    skill.getId(), 
+                    skill.getResume().getId(), 
+                    skill.isStatus(), 
+                    skill.getTechStack(), 
+                    skill.getContent()
+                    )
+                )
+                .collect(Collectors.toList());
+    }
+    
+    private List<CareerDTO> fetchCareersForResume(int resumeId) {
+        return careerRepository.findByResumeId(resumeId).stream()
+                .map(career -> new CareerDTO(
+                    career.getId(), 
+                    career.getResume().getId(), 
+                    career.isStatus(), 
+                    career.getCompany(), 
+                    career.getDepartment(), 
+                    career.getPeriod(), 
+                    career.getIsCurrent(), 
+                    career.getTechStack(), 
+                    career.getContent()
+                    )
+                )
+                .collect(Collectors.toList());
+    }
+    
+    private List<ProjectDTO> fetchProjectsForResume(int resumeId) {
+        return projectRepository.findByResumeId(resumeId).stream()
+                .map(project -> new ProjectDTO(
+                    project.getId(), 
+                    project.getResume().getId(), 
+                    project.isStatus(), 
+                    project.getTitle(), 
+                    project.getPeriod(), 
+                    project.getIsCurrent(), 
+                    project.getIntro(), 
+                    project.getTechStack(), 
+                    project.getContent()
+                    )
+                )
+                .collect(Collectors.toList());
+    }
+
+    //
+    // 추가
+    //
+
 }

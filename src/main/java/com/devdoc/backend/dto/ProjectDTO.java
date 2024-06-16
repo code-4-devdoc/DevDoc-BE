@@ -1,18 +1,26 @@
 package com.devdoc.backend.dto;
 
-public class SkillDTO {
+public class ProjectDTO {
     private int id;
     private int resumeId;
     private boolean status;
+    private String title;
+    private String period;
+    private Boolean isCurrent;
+    private String intro;
     private String techStack;
     private String content;
 
-    public SkillDTO() {}
+    public ProjectDTO() {}
 
-    public SkillDTO(int id, int resumeId, boolean status, String techStack, String content) {
+    public ProjectDTO(int id, int resumeId, boolean status, String title, String period, Boolean isCurrent, String intro, String techStack, String content) {
         this.id = id;
         this.resumeId = resumeId;
         this.status = status;
+        this.title = title;
+        this.period = period;
+        this.isCurrent = isCurrent;
+        this.intro = intro;
         this.techStack = techStack;
         this.content = content;
     }
@@ -39,6 +47,38 @@ public class SkillDTO {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(String period) {
+        this.period = period;
+    }
+
+    public Boolean getIsCurrent() {
+        return isCurrent;
+    }
+
+    public void setIsCurrent(Boolean isCurrent) {
+        this.isCurrent = isCurrent;
+    }
+
+    public String getIntro() {
+        return intro;
+    }
+
+    public void setIntro(String intro) {
+        this.intro = intro;
     }
 
     public String getTechStack() {
