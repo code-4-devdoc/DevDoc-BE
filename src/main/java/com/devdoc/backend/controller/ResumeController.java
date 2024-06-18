@@ -18,7 +18,7 @@ public class ResumeController {
     private ResumeService resumeService;
 
     // Resume 목록 조회
-    @GetMapping("/resumes")
+    @GetMapping("/")
     public ResponseEntity<List<ResumeDTO>> getAllResumes() {
         try {
             List<ResumeDTO> resumes = resumeService.getAllResumes();
