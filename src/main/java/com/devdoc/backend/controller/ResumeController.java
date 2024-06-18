@@ -8,12 +8,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/resumes/") // ------------------------------------------ Test Code
 public class ResumeController {
 
     @Autowired
     private ResumeService resumeService;
+
+    // Resume 목록 조회
+    @GetMapping("/resumes")
+    public ResponseEntity<List<ResumeDTO>> getAllResumes() {
+        try {
+            List<ResumeDTO> resumes = resumeService.getAllResumes();
+            return ResponseEntity.ok(resumes);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 
     // Resume 조회 : 모든 테이블
     @GetMapping("/{resumeId}/statusTF")

@@ -51,6 +51,13 @@ public class ResumeService {
     // @Autowired
     // private UserService userService;                                     // user_id 삭제
 
+    // Resume 목록 조회
+    public List<ResumeDTO> getAllResumes() {
+        return resumeRepository.findAll().stream()
+                .map(resume -> new ResumeDTO(resume.getId(), resume.getTitle(), resume.getCreatedAt()))
+                .collect(Collectors.toList());
+    }
+
     // Resume 조회 : 모든 테이블 -------------------------------------------------- Test Code
     public ResumeDTO getResumeByResumeIdStatusTF(int resumeId) {
         Resume resume = resumeRepository.findById(resumeId)
