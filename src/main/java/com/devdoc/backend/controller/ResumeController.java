@@ -18,7 +18,7 @@ public class ResumeController {
     private ResumeService resumeService;
 
     // Resume 목록 조회
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<ResumeDTO>> getAllResumes() {
         try {
             List<ResumeDTO> resumes = resumeService.getAllResumes();
@@ -54,7 +54,7 @@ public class ResumeController {
         }
     }
 
-    // Resume 생성 : User ID = 1
+    // Resume 생성
     @PostMapping("")
     public ResponseEntity<ResumeDTO> createResumeTest(@RequestParam String title) {
         try {
