@@ -33,6 +33,16 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // Resume 목록 조회 : 전체 목록                                               // user_id 삭제
+    public List<ResumeDTO> getAllResumesTest() {
+        List<Resume> resumes = resumeRepository.findAll();
+
+        return resumes.stream()
+                .map(resume -> new ResumeDTO(resume.getId(), resume.getTitle(), resume.getCreatedAt()))
+                .collect(Collectors.toList());
+    }
+
+    /*
     // Resume 목록 조회 : User ID = 1 --------------------------------------------- Test Code
     public List<ResumeDTO> getAllResumesByUserIdTest() {
         int userId = 1;
@@ -60,6 +70,7 @@ public class UserService {
                 .map(resume -> new ResumeDTO(resume.getId(), resume.getTitle(), resume.getCreatedAt()))
                 .collect(Collectors.toList());
     }
+    */
 
     // -------------------------------------------------------------------------------------
     // 호출함수
@@ -90,14 +101,15 @@ public class UserService {
 
     // 로그인 User =?= Resume 소유자 확인
     public boolean isOwner(int resumeId) {
-        int userId = getCurrentUserId();
+        // int userId = getCurrentUserId();                                     // user_id 삭제
         Optional<Resume> resume = resumeRepository.findById(resumeId);
 
         if (resume.isEmpty()) {
             return false;
         }
 
-        return resume.get().getUser().getId() == userId;
+        // return resume.get().getUser().getId() == userId;                     // user_id 삭제
+        return false;
     }
 
     // Email 형식 검증

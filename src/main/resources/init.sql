@@ -22,10 +22,11 @@ CREATE TABLE IF NOT EXISTS UUser (
 -- Resume 테이블 생성
 CREATE TABLE IF NOT EXISTS RResume (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    -- user_id INT NOT NULL,                                           // user_id 삭제
     title TEXT,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES UUser(id) ON DELETE CASCADE
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    -- created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    -- FOREIGN KEY (user_id) REFERENCES UUser(id) ON DELETE CASCADE    // user_id 삭제
 );
 
 -- Skill 테이블 생성

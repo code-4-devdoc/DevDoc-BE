@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ResumeDTO {
     private int id;
-    private int userId;
+    // private int userId;                               // user_id 삭제
     private String title;
     private LocalDateTime createdAt;
     private List<SkillDTO> skills;
@@ -20,9 +20,10 @@ public class ResumeDTO {
         this.createdAt = createdAt;
     }
 
-    public ResumeDTO(int id, int userId, String title, LocalDateTime createdAt, List<SkillDTO> skills, List<CareerDTO> careers, List<ProjectDTO> projects) {
+    // public ResumeDTO(int id, int userId, String title, LocalDateTime createdAt, List<SkillDTO> skills, List<CareerDTO> careers, List<ProjectDTO> projects) {      // user_id 삭제
+    public ResumeDTO(int id, String title, LocalDateTime createdAt, List<SkillDTO> skills, List<CareerDTO> careers, List<ProjectDTO> projects) {
         this.id = id;
-        this.userId = userId;
+        // this.userId = userId;                        // user_id 삭제
         this.title = title;
         this.createdAt = createdAt;     // ResumeDTO 에 List<항목들> 넣은 이유
         this.skills = skills;           // 1. /api/resumes/{resumeId}/skills/1~3 로 요청 3번 보내기
@@ -38,13 +39,13 @@ public class ResumeDTO {
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
-    }
+    // public int getUserId() {                          // user_id 삭제
+    //     return userId;
+    // }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
+    // public void setUserId(int userId) {               // user_id 삭제
+    //     this.userId = userId;
+    // }
 
     public String getTitle() {
         return title;

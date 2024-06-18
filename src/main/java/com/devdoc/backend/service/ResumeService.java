@@ -8,7 +8,7 @@ import com.devdoc.backend.dto.ProjectDTO;
 // 추가
 //
 import com.devdoc.backend.model.Resume;
-import com.devdoc.backend.model.User;
+// import com.devdoc.backend.model.User;                            // user_id 삭제
 import com.devdoc.backend.model.Skill;
 import com.devdoc.backend.model.Career;
 import com.devdoc.backend.model.Project;
@@ -48,8 +48,8 @@ public class ResumeService {
     // 추가
     //
 
-    @Autowired
-    private UserService userService;
+    // @Autowired
+    // private UserService userService;                                     // user_id 삭제
 
     // Resume 조회 : 모든 테이블 -------------------------------------------------- Test Code
     public ResumeDTO getResumeByResumeIdTest(int resumeId) {
@@ -88,10 +88,11 @@ public class ResumeService {
 
     // Resume 생성 : User ID = 1 ------------------------------------------------- Test Code
     public ResumeDTO createResumeTest(String title) {
-        int userId = 1;
-        User user = userService.getUserByUserId(userId);
+        // int userId = 1;                                                  // user_id 삭제
+        // User user = userService.getUserByUserId(userId);
 
-        Resume resume = new Resume(user, title);
+        // Resume resume = new Resume(user, title);                          
+        Resume resume = new Resume(title);
         resume = resumeRepository.save(resume);
 
         return mapToResumeDTO(resume);
@@ -99,10 +100,11 @@ public class ResumeService {
 
     // Resume 생성 : 로그인 User
     public ResumeDTO createResume(String title) {
-        int userId = userService.getCurrentUserId();
-        User user = userService.getUserByUserId(userId);
+        // int userId = userService.getCurrentUserId();                     // user_id 삭제
+        // User user = userService.getUserByUserId(userId);
 
-        Resume resume = new Resume(user, title);
+        // Resume resume = new Resume(user, title);                          
+        Resume resume = new Resume(title);
         resume = resumeRepository.save(resume);
 
         return mapToResumeDTO(resume);
@@ -240,7 +242,7 @@ public class ResumeService {
 
         return new ResumeDTO(
             resume.getId(),
-            resume.getUser().getId(),
+            // resume.getUser().getId(),                                    // user_id 삭제
             resume.getTitle(),
             resume.getCreatedAt(),
             skills,

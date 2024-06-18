@@ -34,6 +34,20 @@ public class UserController {
         }
     }
 
+    // Resume 목록 조회 : 전체 목록                                               // user_id 삭제
+    @GetMapping("/resumes/test")
+    public ResponseEntity<List<ResumeDTO>> getAllResumesTest() {
+        try {
+            List<ResumeDTO> resumes = userService.getAllResumesTest();
+            return ResponseEntity.ok(resumes);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    /*
     // Resume 목록 조회 : User ID = 1 --------------------------------------------- Test Code
     @GetMapping("/resumes/test")
     public ResponseEntity<List<ResumeDTO>> getAllResumesByUserIdTest() {
@@ -59,5 +73,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+    */
 }
 

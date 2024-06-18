@@ -11,9 +11,9 @@ public class Resume {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    // @ManyToOne(fetch = FetchType.LAZY)                    // user_id 삭제
+    // @JoinColumn(name = "user_id", nullable = false)
+    // private User user;
 
     private String title;
 
@@ -31,8 +31,9 @@ public class Resume {
 
     public Resume() {}
 
-    public Resume(User user, String title) {
-        this.user = user;
+    // public Resume(User user, String title) {              // user_id 삭제
+    public Resume(String title) {
+        // this.user = user;                                 // user_id 삭제
         this.title = title;
         this.createdAt = LocalDateTime.now();
     }
@@ -45,13 +46,13 @@ public class Resume {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
-    }
+    // public User getUser() {                               // user_id 삭제
+    //     return user;
+    // }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+    // public void setUser(User user) {                      // user_id 삭제
+    //     this.user = user;
+    // }
 
     public String getTitle() {
         return title;

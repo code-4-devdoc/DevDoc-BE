@@ -1,7 +1,7 @@
 package com.devdoc.backend.model;
 
 import jakarta.persistence.*;
-import java.util.List;
+// import java.util.List;                                         // user_id 삭제
 
 @Entity
 @Table(name = "UUser")
@@ -16,8 +16,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Resume> resumes;
+    // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // private List<Resume> resumes;                                // user_id 삭제
 
     public User() {}
 
@@ -50,11 +50,11 @@ public class User {
         this.password = password;
     }
 
-    public List<Resume> getResumes() {
-        return resumes;
-    }
+    // public List<Resume> getResumes() {                               // user_id 삭제
+    //     return resumes;
+    // }
 
-    public void setResumes(List<Resume> resumes) {
-        this.resumes = resumes;
-    }
+    // public void setResumes(List<Resume> resumes) {
+    //     this.resumes = resumes;
+    // }
 }
