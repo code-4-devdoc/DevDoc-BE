@@ -52,7 +52,7 @@ public class ResumeService {
     // private UserService userService;                                     // user_id 삭제
 
     // Resume 조회 : 모든 테이블 -------------------------------------------------- Test Code
-    public ResumeDTO getResumeByResumeIdTest(int resumeId) {
+    public ResumeDTO getResumeByResumeIdStatusTF(int resumeId) {
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
 
@@ -60,7 +60,7 @@ public class ResumeService {
     }
 
     // Resume 조회 : Status = T 인 모든 테이블
-    public ResumeDTO getResumeByResumeId(int resumeId) {
+    public ResumeDTO getResumeByResumeIdStatusT(int resumeId) {
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Resume not found"));
 
@@ -236,26 +236,7 @@ public class ResumeService {
         //
 
     private ResumeDTO mapToResumeDTO(Resume resume) {
-        List<SkillDTO> skills = fetchSkillsForResume(resume.getId());
-        List<CareerDTO> careers = fetchCareersForResume(resume.getId());
-        List<ProjectDTO> projects = fetchProjectsForResume(resume.getId());
-
-        return new ResumeDTO(
-            resume.getId(),
-            // resume.getUser().getId(),                                    // user_id 삭제
-            resume.getTitle(),
-            resume.getCreatedAt(),
-            skills,
-            careers,
-            projects
-            //
-            // 추가
-            //
-        );
-    }
-
-    private List<SkillDTO> fetchSkillsForResume(int resumeId) {
-        return skillRepository.findByResumeId(resumeId).stream()
+        List<SkillDTO> skills = resume.getSkills().stream()
                 .map(skill -> new SkillDTO(
                     skill.getId(), 
                     skill.getResume().getId(), 
@@ -265,10 +246,8 @@ public class ResumeService {
                     )
                 )
                 .collect(Collectors.toList());
-    }
     
-    private List<CareerDTO> fetchCareersForResume(int resumeId) {
-        return careerRepository.findByResumeId(resumeId).stream()
+        List<CareerDTO> careers = resume.getCareers().stream()
                 .map(career -> new CareerDTO(
                     career.getId(), 
                     career.getResume().getId(), 
@@ -282,10 +261,8 @@ public class ResumeService {
                     )
                 )
                 .collect(Collectors.toList());
-    }
     
-    private List<ProjectDTO> fetchProjectsForResume(int resumeId) {
-        return projectRepository.findByResumeId(resumeId).stream()
+        List<ProjectDTO> projects = resume.getProjects().stream()
                 .map(project -> new ProjectDTO(
                     project.getId(), 
                     project.getResume().getId(), 
@@ -299,10 +276,20 @@ public class ResumeService {
                     )
                 )
                 .collect(Collectors.toList());
-    }
 
-    //
-    // 추가
-    //
+        //
+        // 추가
+        //
+    
+        return new ResumeDTO(
+            resume.getId(),
+            // resume.getUser().getId(),                                    // user_id 삭제
+            resume.getTitle(),
+            resume.getCreatedAt(),
+            skills,
+            careers,
+            projects
+        );
+    }
 
 }
